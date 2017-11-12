@@ -48,7 +48,60 @@ echo "c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False" >> .jupyter/jupyter_notebook_config.py
 mkdir nbs
 
-download tmux from github
-download
-[nvcc]
-flags=-D_FORCE_INLINES
+##################################################################################
+# personal settings
+######################
+# vim
+echo "
+set number
+syntax enable
+set background=dark
+colorscheme gruvbox
+
+if &term =~ '256color'
+  # disable Background Color Erase (BCE) so that color schemes
+  # render properly when inside 256-color tmux and GNU screen.
+  # see also http://snk.tuxfamily.org/log/vim-256color-bce.html
+  set t_ut=
+endif
+" > ~/.vimrc
+
+mkdir ~/.vim/colors
+cd ~/.vim/colors
+curl -O https://raw.githubusercontent.com/morhetz/gruvbox/master/colors/gruvbox.vim
+
+# shell
+cd ~/
+wget https://raw.githubusercontent.com/seebi/dircolors-solarized/master/dircolors.ansi-light
+mv dircolors.ansi-light .dircolors
+
+# set tmux config
+echo "#remap prefix from 'C-b' to 'C-a'
+unbind C-b
+set-option -g prefix C-a
+bind-key C-a send-prefix
+
+# split panes using | and -
+bind | split-window -h
+bind _ split-window -v
+unbind '\"'
+unbind %
+bind k confirm kill-window
+bind K confirm kill-server
+bind < resize-pane -L 1
+bind > resize-pane -R 1
+bind - resize-pane -D 1
+bind + resize-pane -U 1
+bind r source-file ~/.tmux.conf
+
+# switch panes using Alt-arrow without prefix
+bind -n M-Left select-pane -L
+bind -n M-Right select-pane -R
+bind -n M-Up select-pane -U
+bind -n M-Down select-pane -D
+
+# Enable mouse control (clickable windows, panes, resizable panes)
+set -g mouse on
+set -g default-terminal 'screen-256color'
+" > ~/.tmuxconf
+
